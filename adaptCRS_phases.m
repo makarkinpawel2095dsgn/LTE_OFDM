@@ -21,6 +21,8 @@ find_FallingFront = zeros(size_CRSPhas);
 find_RisingFront = zeros(size_CRSPhas);
 
 Period_CRS_RissingFront = zeros(size_CRSPhas);
+buff_CRSphasPeriod = zeros(1,size_CRSPhas(2));
+localMaxPeriod = zeros(size_CRSPhas);
 
 for i = 1 : size_CRSPhas(1)
     %%
@@ -50,9 +52,50 @@ for i = 1 : size_CRSPhas(1)
     end;
     buff_CRSphas = CRSPhas(i,:);
     
-    
-    
 end;
+
+FIR_aray = zeros(size_CRSPhas);
+FIR_del_vect0 = zeros(1, size_CRSPhas(2));
+FIR_del_vect1 = zeros(1, size_CRSPhas(2));
+
+for i = 1 : size_CRSPhas(1)
+    
+    FIR_aray(i,:) = (CRSPhas(i,:) + 0.8.*FIR_del_vect0)./1.8; % + 0.2.*FIR_del_vect1)./3;
+    FIR_del_vect1 = FIR_del_vect0;
+    FIR_del_vect0 = CRSPhas(i,:);
+end;
+
+sum_aver = 0;
+sum_averVect = zeros(1, size_CRSPhas(1));
+for i = 1 : size_CRSPhas(1)
+    
+    for j = 1 : size_CRSPhas(2)
+        sum_aver = sum_aver + CRSPhas(i,j);
+    end;
+    sum_averVect(i) = sum_aver/size_CRSPhas(2);
+end;
+
+diff_aray = zeros(size_CRSPhas);
+diff_vect = zeros(1, size_CRSPhas(2));
+for i = 1 : size_CRSPhas(1)
+    
+    for j = 1 : size_CRSPhas(2)
+        diff_aray(i,j) = CRSPhas(i,j) - diff_vect(j);
+    end;
+    diff_vect = CRSPhas(i,:);
+end;
+
+
+diff = 0;
+
+for i = 1 : size_CRSPhas(1)
+
+    diff_Vect(i) = sum_averVect(i) - diff;
+    diff = sum_averVect(i);
+end;
+figure(1); 
+subplot(2,1,1); plot(diff_Vect);
+subplot(2,1,2); plot(diff_aray);
 figure(1); 
 plot(CRS_Phases);
 figure(2);
